@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Modal } from 'react-native';
+import { NavigationContainer } from '@react-natigation/native';
+import{ createStackNavigator, StackView } from '@react-navigation/stack';
+import SavedPasswords from'./src/ screens/SavedPasswords';
 import { ModalPassword } from './src/components/modal/index'; 
 
 let charset = "abcdefghijklmnopqrstuvwxyz!@#$%&*0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
- 
-export default function App() {
+const stack = createStackNavigator();
+function HomeScreen( {navigation}) {
   const [senhaGerada, setSenhaGerada] = useState("")
   const [modalVisible, setModalVisible] = useState(false)
-
+  const [savedPasswords, setSavedPasswords] = useState([]);
   function gerarSenha(){
    
     let senha = "";
@@ -19,6 +22,15 @@ export default function App() {
     setSenhaGerada(senha)
     setModalVisible(true)
  
+  }
+
+  function salvarSenha(){
+    setSavedPasswords(prevPasswords =>{
+      const updatedPasswords = [...prevPasswords, senhaGerada];
+      setModalVisible(false);
+      navigation.navigate('SavedPasswords',  {savedPasswords: updatedPasswords});
+      return updatedPasswords;
+    });
   }
  
  
@@ -36,13 +48,24 @@ export default function App() {
       </TouchableOpacity>
 
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
-        <ModalPassword senha={senhaGerada} handleClose={() => setModalVisible(false)}/>
+        <ModalPassword senha={senhaGerada} handleClose={() => setModalVisible(false)} salvarSenha={salvarSenha}/>
       </Modal>
  
      
       
     </View>
   );
+}
+
+export default function App(){
+  return (
+    <NavigationContainer>
+      <StackView.Navigator>
+      <stack.Screen name="Home" component={HomeScreen}/>
+      <stack.Screen name="SavedPasswords" component={SavedPasswords}/>
+      </StackView.Navigator>
+      </NavigationContainer>
+  )
 }
  
 const styles = StyleSheet.create({

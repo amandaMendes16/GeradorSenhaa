@@ -6,11 +6,7 @@ export function ModalPassword({ senha, handleClose }) {
 
     function copyClipboard() {
         Clipboard.setStringAsync(senha);
-        Toast.show({
-            type: 'success',
-            text1: 'Senha copiada',
-            text2: 'Senha copiada para a área de tranfêrencia!',
-        });
+        alert('Senha copiada para área de transferência!');
     }
 
     return (
